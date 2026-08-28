@@ -1,0 +1,140 @@
+Started by user Samarth M Katageri
+
+Obtained Jenkinsfile from git https://github.com/SIIM21-force/jenkins-pipeline
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins
+ in /var/lib/jenkins/workspace/the-trial-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/SIIM21-force/jenkins-pipeline
+ > git init /var/lib/jenkins/workspace/the-trial-pipeline # timeout=10
+Fetching upstream changes from https://github.com/SIIM21-force/jenkins-pipeline
+ > git --version # timeout=10
+ > git --version # 'git version 2.55.0'
+ > git fetch --tags --force --progress -- https://github.com/SIIM21-force/jenkins-pipeline +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/SIIM21-force/jenkins-pipeline # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 24381f0585716ab3d96b69092888574d334aa9d9 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 24381f0585716ab3d96b69092888574d334aa9d9 # timeout=10
+Commit message: "initial: added app code, Dockerfile, and Jenkinsfile alongside simple web app codes"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Install & Test)
+[Pipeline] echo
+Running unit tests...
+[Pipeline] sh
++ npm install
+
+
+added 68 packages, and audited 69 packages in 3s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+[Pipeline] sh
++ npm test
+npm notice run simple-web-app@1.0.0 test
+npm notice run node --test test/app.test.js
+
+TAP version 13
+# Subtest: App module loads successfully
+ok 1 - App module loads successfully
+  ---
+  duration_ms: 1.427089
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 202.656268
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Container Image)
+[Pipeline] echo
+Building image with Podman...
+[Pipeline] sh
++ podman build -t simple-web-app:latest .
+time="2026-08-28T12:51:38+05:30" level=warning msg="The cgroupv2 manager is set to systemd but there is no systemd user session available"
+time="2026-08-28T12:51:38+05:30" level=warning msg="For using systemd, you may need to log in using a user session"
+time="2026-08-28T12:51:38+05:30" level=warning msg="Alternatively, you can enable lingering with: `loginctl enable-linger 958` (possibly as root)"
+time="2026-08-28T12:51:38+05:30" level=warning msg="Falling back to --cgroup-manager=cgroupfs"
+STEP 1/7: FROM node:20-alpine
+Resolved "node" as an alias (/usr/share/containers/registries.conf.d/00-shortnames.conf)
+Trying to pull docker.io/library/node:20-alpine...
+
+Getting image source signatures
+Copying blob sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096
+Copying blob sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287
+Copying blob sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122
+Copying blob sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb
+
+Copying config sha256:11cedc39e663e7c5d5cb9cc77a461a0d2adc25537b94e6831a6108f09cb2001b
+Writing manifest to image destination
+STEP 2/7: WORKDIR /app
+--> ccd2152e79d2
+STEP 3/7: COPY package*.json ./
+--> d418684fdb95
+STEP 4/7: RUN npm install --omit=dev
+
+error running container: from /usr/bin/crun creating container for [/bin/sh -c npm install --omit=dev]: sd-bus call: Access denied as the requested operation requires interactive authentication. However, interactive authentication has not been enabled by the calling program.: Permission denied
+: exit status 1
+time="2026-08-28T12:51:54+05:30" level=error msg="did not get container create message from subprocess: EOF"
+Error: building at STEP "RUN npm install --omit=dev": while running runtime: exit status 1
+time="2026-08-28T12:51:54+05:30" level=warning msg="Failed to add pause process to systemd sandbox cgroup: dbus: couldn't determine address of session bus"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy Application)
+Stage "Deploy Application" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Health Check)
+Stage "Health Check" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] cleanWs
+[WS-CLEANUP] Deleting project workspace...
+[WS-CLEANUP] Deferred wipeout is used...
+[WS-CLEANUP] done
+
+[Pipeline] echo
+Pipeline failed. Check the logs above.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

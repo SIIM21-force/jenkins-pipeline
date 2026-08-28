@@ -1,0 +1,174 @@
+Started by user Samarth M Katageri
+
+Obtained Jenkinsfile from git https://github.com/SIIM21-force/jenkins-pipeline
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins
+ in /var/lib/jenkins/workspace/the-trial-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/SIIM21-force/jenkins-pipeline
+ > git init /var/lib/jenkins/workspace/the-trial-pipeline # timeout=10
+Fetching upstream changes from https://github.com/SIIM21-force/jenkins-pipeline
+ > git --version # timeout=10
+ > git --version # 'git version 2.55.0'
+ > git fetch --tags --force --progress -- https://github.com/SIIM21-force/jenkins-pipeline +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/SIIM21-force/jenkins-pipeline # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 3bd7435966d0c6fdbd1adc9470f138a9a22f12a9 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 3bd7435966d0c6fdbd1adc9470f138a9a22f12a9 # timeout=10
+Commit message: "second: modified Jenkinsfile"
+ > git rev-list --no-walk 24381f0585716ab3d96b69092888574d334aa9d9 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Install & Test)
+[Pipeline] echo
+Running unit tests...
+[Pipeline] sh
++ npm install
+
+added 68 packages, and audited 69 packages in 5s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+[Pipeline] sh
++ npm test
+npm notice run simple-web-app@1.0.0 test
+npm notice run node --test test/app.test.js
+TAP version 13
+# Subtest: App module loads successfully
+ok 1 - App module loads successfully
+  ---
+  duration_ms: 1.278187
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 195.55711
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Container Image)
+[Pipeline] echo
+Building image with Podman...
+[Pipeline] sh
++ podman build --cgroup-manager=cgroupfs -t simple-web-app:latest .
+STEP 1/7: FROM node:20-alpine
+STEP 2/7: WORKDIR /app
+--> Using cache ccd2152e79d2695c570797db32799a230205a9ba2d9e2357397ae8a91ca7d08e
+--> ccd2152e79d2
+STEP 3/7: COPY package*.json ./
+--> Using cache d418684fdb95ba0d06824648b19d52aaa923fe5a2be6fb4b76250c335c2f635c
+--> d418684fdb95
+STEP 4/7: RUN npm install --omit=dev
+
+added 68 packages, and audited 69 packages in 2s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+--> 433097d95b2d
+STEP 5/7: COPY . .
+--> 399cb5b6efa8
+STEP 6/7: EXPOSE 3000
+--> 76086d3b81e2
+STEP 7/7: CMD ["npm", "start"]
+COMMIT simple-web-app:latest
+--> 1b38f36b7fa6
+Successfully tagged localhost/simple-web-app:latest
+1b38f36b7fa6fc819affa3c3ce5abad4d08117872f89bebf427a1b6ac07d9160
+time="2026-08-28T12:57:07+05:30" level=warning msg="Failed to add pause process to systemd sandbox cgroup: dbus: couldn't determine address of session bus"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy Application)
+[Pipeline] echo
+Deploying container...
+[Pipeline] sh
++ podman stop simple-web-app-container
+time="2026-08-28T12:57:08+05:30" level=warning msg="The cgroupv2 manager is set to systemd but there is no systemd user session available"
+time="2026-08-28T12:57:08+05:30" level=warning msg="For using systemd, you may need to log in using a user session"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Alternatively, you can enable lingering with: `loginctl enable-linger 958` (possibly as root)"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Falling back to --cgroup-manager=cgroupfs"
+time="2026-08-28T12:57:08+05:30" level=warning msg="The cgroupv2 manager is set to systemd but there is no systemd user session available"
+time="2026-08-28T12:57:08+05:30" level=warning msg="For using systemd, you may need to log in using a user session"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Alternatively, you can enable lingering with: `loginctl enable-linger 958` (possibly as root)"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Falling back to --cgroup-manager=cgroupfs"
+Error: no container with name or ID "simple-web-app-container" found: no such container
++ true
++ podman rm -f simple-web-app-container
+time="2026-08-28T12:57:08+05:30" level=warning msg="The cgroupv2 manager is set to systemd but there is no systemd user session available"
+time="2026-08-28T12:57:08+05:30" level=warning msg="For using systemd, you may need to log in using a user session"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Alternatively, you can enable lingering with: `loginctl enable-linger 958` (possibly as root)"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Falling back to --cgroup-manager=cgroupfs"
+time="2026-08-28T12:57:08+05:30" level=warning msg="The cgroupv2 manager is set to systemd but there is no systemd user session available"
+time="2026-08-28T12:57:08+05:30" level=warning msg="For using systemd, you may need to log in using a user session"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Alternatively, you can enable lingering with: `loginctl enable-linger 958` (possibly as root)"
+time="2026-08-28T12:57:08+05:30" level=warning msg="Falling back to --cgroup-manager=cgroupfs"
++ podman run --cgroup-manager=cgroupfs -d --name simple-web-app-container -p 3000:3000 simple-web-app:latest
+c8c07221c4cf695be8a44f78e25b74c6452d563c82ffea58cf263c5eb1cf622d
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Health Check)
+[Pipeline] echo
+Verifying application health...
+[Pipeline] sh
++ sleep 3
++ curl -f http://localhost:3000/health
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+
+  0      0   0      0   0      0      0      0                              0
+100     35 100     35   0      0   2526      0                              0
+100     35 100     35   0      0   2427      0                              0
+100     35 100     35   0      0   2341      0                              0
+{"status":"OK","uptime":3.11153351}
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] cleanWs
+[WS-CLEANUP] Deleting project workspace...
+[WS-CLEANUP] Deferred wipeout is used...
+[WS-CLEANUP] done
+[Pipeline] echo
+Pipeline completed successfully!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
