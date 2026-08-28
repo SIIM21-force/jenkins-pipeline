@@ -19,7 +19,8 @@ pipeline {
         stage('Build Container Image') {
             steps {
                 echo 'Building image with Podman...'
-                sh "podman build -t ${IMAGE_NAME}:latest ."
+                sh "podman build --cgroup-manager=cgroupfs -t ${IMAGE_NAME}:latest ."
+
             }
         }
 
@@ -31,7 +32,8 @@ pipeline {
                 podman stop ${CONTAINER_NAME} || true
                 podman rm -f ${CONTAINER_NAME} || true
                 # Run the new container
-                podman run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:3000 ${IMAGE_NAME}:latest
+                podman run --cgroup-manager=cgroupfs -d --name ${CONTAINER_NAME} -p ${APP_PORT}:3000 ${IMAGE_NAME}:latest
+
                 """
             }
         }
