@@ -118,12 +118,3 @@ curl http://localhost:3000/health
 ```
 
 ---
-
-## 📊 Verification & Results
-
-A complete, successful execution log is preserved in [`2nd-build.txt`](file:///home/sam/Projects/jenkins-podman/2nd-build.txt) showing:
-* ✅ All unit tests passing
-* ✅ Podman container build completed
-* ✅ Podman container deployment running on port 3000
-* ✅ Health check returned `{"status":"OK"}`
-* ✅ Status: `Finished: SUCCESS`
